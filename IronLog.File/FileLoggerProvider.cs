@@ -28,7 +28,6 @@ namespace IronLog.File
             {
                 case "txt": return new IronTxtLogger(options, categoryName);
                 case "json": return new IronJsonLogger(options, categoryName);
-                case "xml": return new IronXmlLogger(options, categoryName);
                 default: return null; 
             }
             
