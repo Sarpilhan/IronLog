@@ -1,10 +1,9 @@
 ﻿using IronLog.File.Model;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+using System; 
 using System.IO;
-using System.Net;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace IronLog.File.Loggers
 {
@@ -12,10 +11,13 @@ namespace IronLog.File.Loggers
     {
         private readonly FileLoggerOptions _options;
         private readonly string _categoryName;
+        private readonly JsonSerializerOptions _jsonOptions;
+
         public IronJsonLogger(FileLoggerOptions options, string CategoryName)
         {
             _options = options;
             _categoryName = CategoryName;
+            _jsonOptions = new JsonSerializerOptions() { IgnoreNullValues = true };
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -44,16 +46,9 @@ namespace IronLog.File.Loggers
                 default: FileNextPart = "Infinite"; break;
             }
 
-            var _fileName = String.Format(_options.FileNameStatic, FileNextPart) + "." + _options.LoggerType;
-
-            StringBuilder builder = new StringBuilder(_options.Layout);
-            builder.Replace("{date}", DateTime.Now.ToString(_options.DateFormat));
-            builder.Replace("{level}", logLevel.ToString());
-            builder.Replace("{logger}", _categoryName ?? "");
-            builder.Replace("{message}", formatter(state, exception) ?? "");
-            builder.Replace("{exception}", exception != null ? exception.InnerException?.Message : "");
-
-            WriteMessageToFile(_options.Path, _fileName, builder.ToString());
+            var _fileName = String.Format(_options.FileNameStatic, FileNextPart) + "." + _options.LoggerType; 
+            var obj = new { Date = DateTime.Now, Level = logLevel.ToString(), Logger = _categoryName, Message = formatter(state, exception), Exception =   exception?.InnerException?.Message };   
+            WriteMessageToFile(_options.Path, _fileName, JsonSerializer.Serialize(obj, _jsonOptions));
 
         }
 
