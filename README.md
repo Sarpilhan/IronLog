@@ -12,18 +12,18 @@
 
 ######  Startup.cs 
 ```csharp
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
-		{ 
-			loggerFactory.AddProvider(new FileLoggerProvider(Configuration)); 
-			app.UseHttpsRedirection();
-			app.UseStaticFiles(); 
-			app.UseRouting(); 
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapBlazorHub();
-				endpoints.MapFallbackToPage("/_Host");
-			});
-		}
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+{ 
+	loggerFactory.AddProvider(new FileLoggerProvider(Configuration)); 
+	app.UseHttpsRedirection();
+	app.UseStaticFiles(); 
+	app.UseRouting(); 
+	app.UseEndpoints(endpoints =>
+	{
+		endpoints.MapBlazorHub();
+		endpoints.MapFallbackToPage("/_Host");
+	});
+}
 ```
 ######  appsettings.json
 ```json
@@ -34,29 +34,29 @@
     "SplitFormat": "Hourly",  //Infinite, Minute, Hourly, QuarterlyDaily, HalfDay, Daily, Weekly, Monthly
     "Layout": "{date} {level} {logger}  {message} {exception}",
     "DateFormat": "dd/MM/yyyy HH:mm:ss" 
-  }
+}
 ```
 
 
 ## Usage
 ```csharp
-    public class HomeController : Controller
+public class HomeController : Controller
+{
+    private readonly ILogger<HomeController> _logger; 
+    public HomeController(ILogger<HomeController> logger)
     {
-        private readonly ILogger<HomeController> _logger; 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            _logger.LogInformation("Sample 1");
-            _logger.LogDebug("Sample 2");
-            _logger.LogError("Sample 3");
-            _logger.LogTrace("Sample 4");
-            _logger.LogCritical("Sample 5");
-            return View();
-        } 
+        _logger = logger;
     }
+
+    public IActionResult Index()
+    {
+        _logger.LogInformation("Sample 1");
+        _logger.LogDebug("Sample 2");
+        _logger.LogError("Sample 3");
+        _logger.LogTrace("Sample 4");
+        _logger.LogCritical("Sample 5");
+        return View();
+    } 
+}
 ```
 
