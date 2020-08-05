@@ -1,11 +1,8 @@
 ﻿using IronLog.File.Loggers;
 using IronLog.File.Model;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace IronLog.File
 {
@@ -18,19 +15,18 @@ namespace IronLog.File
         }
         public ILogger CreateLogger(string categoryName)
         {
-            FileLoggerOptions options = new FileLoggerOptions(); 
+            FileLoggerOptions options = new FileLoggerOptions();
             _config.GetSection(FileLoggerOptions.FileLoggerOption).Bind(options);
 
-            if (string.IsNullOrEmpty(options.Path)) 
-                options.Path = _config.GetValue<string>(WebHostDefaults.ContentRootKey); 
-             
+            if (string.IsNullOrEmpty(options.Path) || options.Path.Substring(0, 1) == "\\")
+                options.Path = System.IO.Directory.GetCurrentDirectory() + options.Path;
+
             switch (options.LoggerType)
             {
                 case "txt": return new IronTxtLogger(options, categoryName);
                 case "json": return new IronJsonLogger(options, categoryName);
-                default: return null; 
+                default: return null;
             }
-            
         }
 
         public void Dispose()

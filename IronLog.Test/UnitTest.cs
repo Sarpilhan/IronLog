@@ -19,10 +19,15 @@ namespace IronLog.Test
         public void MainTest()
         {
 
-            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build(); 
             var factory = new FileLoggerProvider(config); 
+
             var logger = factory.CreateLogger("SampleController"); 
             logger.LogInformation("Sample 1");
+            logger.LogDebug("Sample 2");
+            logger.LogError("Sample 3");
+            logger.LogTrace("Sample 4");
+            logger.LogCritical("Sample 5");
 
         }
     }

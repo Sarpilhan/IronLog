@@ -1,9 +1,8 @@
 ﻿using IronLog.File.Model;
 using Microsoft.Extensions.Logging;
-using System; 
+using System;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace IronLog.File.Loggers
 {
@@ -46,8 +45,8 @@ namespace IronLog.File.Loggers
                 default: FileNextPart = "Infinite"; break;
             }
 
-            var _fileName = String.Format(_options.FileNameStatic, FileNextPart) + "." + _options.LoggerType; 
-            var obj = new { Date = DateTime.Now, Level = logLevel.ToString(), Logger = _categoryName, Message = formatter(state, exception), Exception =   exception?.InnerException?.Message };   
+            var _fileName = String.Format(_options.FileNameStatic, FileNextPart) + "." + _options.LoggerType;
+            var obj = new { Date = DateTime.Now, Level = logLevel.ToString(), Logger = _categoryName, Message = formatter(state, exception), Exception = exception?.InnerException?.Message };
             WriteMessageToFile(_options.Path, _fileName, JsonSerializer.Serialize(obj, _jsonOptions));
 
         }

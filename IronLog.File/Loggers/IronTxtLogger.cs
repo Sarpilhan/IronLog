@@ -1,9 +1,7 @@
 ﻿using IronLog.File.Model;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text;
 
 namespace IronLog.File.Loggers
@@ -25,7 +23,7 @@ namespace IronLog.File.Loggers
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            return true; 
+            return true;
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -53,17 +51,24 @@ namespace IronLog.File.Loggers
             builder.Replace("{message}", formatter(state, exception) ?? "");
             builder.Replace("{exception}", exception != null ? exception.InnerException?.Message : "");
 
-            WriteMessageToFile(_options.Path, _fileName,  builder.ToString());
+            WriteMessageToFile(_options.Path, _fileName, builder.ToString());
 
         }
 
         private static void WriteMessageToFile(string Path, string FileName, string message)
-        { 
-            using (var streamWriter = new StreamWriter($"{ Path }\\{ FileName }", true))
-            {
-                streamWriter.WriteLineAsync(message).Wait();
-                streamWriter.Close();
+        {
+            try
+            { 
+                if (!Directory.Exists(Path))
+                    Directory.CreateDirectory(Path);
+
+                using (var streamWriter = new StreamWriter($"{ Path }\\{ FileName }", true))
+                {
+                    streamWriter.WriteLineAsync(message).Wait();
+                    streamWriter.Close();
+                }
             }
+            catch { }
         }
     }
 }
