@@ -4,11 +4,11 @@
 
 ## Setup
 
-`Install-Package IronLog.File -Version 1.0.1`
+`Install-Package IronLog.File -Version 1.0.2`
 
-`dotnet add package IronLog.File --version 1.0.1`
+`dotnet add package IronLog.File --version 1.0.2`
 
-`<PackageReference Include="IronLog.File" Version="1.0.1" />`
+`<PackageReference Include="IronLog.File" Version="1.0.2" />`
 
 ######  Startup.cs 
 ```csharp
