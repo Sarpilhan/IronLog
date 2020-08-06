@@ -31,7 +31,7 @@ namespace IronLog.File
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            GC.SuppressFinalize(this);
         }
     }
 }
