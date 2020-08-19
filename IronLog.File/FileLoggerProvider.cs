@@ -8,6 +8,7 @@ namespace IronLog.File
 {
     public class FileLoggerProvider : ILoggerProvider
     {
+        private bool isDisposed;
         private IConfiguration _config;
         public FileLoggerProvider(IConfiguration config)
         {
@@ -31,7 +32,18 @@ namespace IronLog.File
 
         public void Dispose()
         {
+            Dispose(true); 
             GC.SuppressFinalize(this);
+        } 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                _config = null;
+            }  
+            isDisposed = true;
         }
     }
 }
