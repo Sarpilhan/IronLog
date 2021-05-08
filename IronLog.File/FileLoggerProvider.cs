@@ -1,6 +1,7 @@
 ﻿using IronLog.File.Loggers;
 using IronLog.File.Model;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -10,31 +11,41 @@ namespace IronLog.File
     {
         private bool isDisposed;
         private IConfiguration _config;
-        public FileLoggerProvider(IConfiguration config)
+        private IHostEnvironment _env;
+
+        public FileLoggerProvider(IConfiguration config, IHostEnvironment env)
         {
             _config = config;
+            _env = env;
         }
+
         public ILogger CreateLogger(string categoryName)
         {
             FileLoggerOptions options = new FileLoggerOptions();
             _config.GetSection(FileLoggerOptions.FileLoggerOption).Bind(options);
 
-            if (string.IsNullOrEmpty(options.Path) || options.Path.Substring(0, 1) == "\\")
-                options.Path = System.IO.Directory.GetCurrentDirectory() + options.Path;
-
-            switch (options.LoggerType)
+            if (options.Path.StartsWith("\\"))
             {
-                case "txt": return new IronTxtLogger(options, categoryName);
-                case "json": return new IronJsonLogger(options, categoryName);
-                default: return null;
+                if (_env != null)
+                    options.Path = _env.ContentRootPath + options.Path;
+                else
+                    options.Path = System.IO.Directory.GetCurrentDirectory() + options.Path;
             }
+
+            return options.LoggerType switch
+            {
+                "txt" => new IronTxtLogger(options, categoryName),
+                "json" => new IronJsonLogger(options, categoryName),
+                _ => null,
+            };
         }
 
         public void Dispose()
         {
-            Dispose(true); 
+            Dispose(true);
             GC.SuppressFinalize(this);
-        } 
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (isDisposed) return;
@@ -42,7 +53,8 @@ namespace IronLog.File
             if (disposing)
             {
                 _config = null;
-            }  
+                _env = null;
+            }
             isDisposed = true;
         }
     }

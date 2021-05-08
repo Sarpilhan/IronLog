@@ -10,6 +10,7 @@ namespace IronLog.File.Loggers
     {
         private readonly FileLoggerOptions _options;
         private readonly string _categoryName;
+
         public IronTxtLogger(FileLoggerOptions options, string CategoryName)
         {
             _options = options;
@@ -30,20 +31,18 @@ namespace IronLog.File.Loggers
         {
             try
             {
-                string FileNextPart = "";
-                switch (_options.SplitFormat)
+                string FileNextPart = _options.SplitFormat switch
                 {
-                    case SplitType.Infinite: FileNextPart = "Infinite"; break;
-                    case SplitType.Minute: FileNextPart = DateTime.Now.ToString("yyyyMMddHHmm"); break;
-                    case SplitType.Hourly: FileNextPart = DateTime.Now.ToString("yyyyMMddHH"); break;
-                    case SplitType.QuarterlyDaily: FileNextPart = DateTime.Now.ToString("yyyyMMdd") + "_" + (DateTime.Now.Hour / 6).ToString(); break;
-                    case SplitType.HalfDay: FileNextPart = DateTime.Now.ToString("yyyyMMdd") + "_" + (DateTime.Now.Hour / 12).ToString(); break;
-                    case SplitType.Daily: FileNextPart = DateTime.Now.ToString("yyyyMMdd"); break;
-                    case SplitType.Weekly: FileNextPart = DateTime.Now.Year + "_" + (DateTime.Now.DayOfYear / 7); break;
-                    case SplitType.Monthly: FileNextPart = DateTime.Now.Month.ToString(); break;
-                    default: FileNextPart = "Infinite"; break;
-                }
-
+                    SplitType.Infinite => "Infinite",
+                    SplitType.Minute => DateTime.Now.ToString("yyyyMMddHHmm"),
+                    SplitType.Hourly => DateTime.Now.ToString("yyyyMMddHH"),
+                    SplitType.QuarterlyDaily => DateTime.Now.ToString("yyyyMMdd") + "_" + (DateTime.Now.Hour / 6).ToString(),
+                    SplitType.HalfDay => DateTime.Now.ToString("yyyyMMdd") + "_" + (DateTime.Now.Hour / 12).ToString(),
+                    SplitType.Daily => DateTime.Now.ToString("yyyyMMdd"),
+                    SplitType.Weekly => DateTime.Now.Year + "_" + (DateTime.Now.DayOfYear / 7),
+                    SplitType.Monthly => DateTime.Now.Month.ToString(),
+                    _ => "Infinite",
+                };
                 var _fileName = String.Format(_options.FileNameStatic, FileNextPart) + "." + _options.LoggerType;
 
                 StringBuilder builder = new StringBuilder(_options.Layout);
@@ -54,9 +53,11 @@ namespace IronLog.File.Loggers
                 builder.Replace("{exception}", exception != null ? exception.InnerException?.Message : "");
 
                 WriteMessageToFile(_options.Path, _fileName, builder.ToString());
-
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static void WriteMessageToFile(string Path, string FileName, string message)
@@ -64,11 +65,9 @@ namespace IronLog.File.Loggers
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
 
-            using (var streamWriter = new StreamWriter($"{ Path }\\{ FileName }", true))
-            {
-                streamWriter.WriteLineAsync(message).Wait();
-                streamWriter.Close();
-            }
+            using var streamWriter = new StreamWriter($"{ Path }\\{ FileName }", true);
+            streamWriter.WriteLineAsync(message).Wait();
+            streamWriter.Close();
         }
     }
 }
