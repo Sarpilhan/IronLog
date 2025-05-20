@@ -1,4 +1,4 @@
-﻿namespace IronLog.File.Model
+namespace IronLog.File.Model
 {
     public enum SplitType
     {

@@ -1,4 +1,4 @@
-﻿using IronLog.File.Model;
+using IronLog.File.Model;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -65,9 +65,9 @@ namespace IronLog.File.Loggers
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
 
-            using var streamWriter = new StreamWriter($"{ Path }\\{ FileName }", true);
+            var filePath = Path.Combine(Path, FileName);
+            using var streamWriter = new StreamWriter(filePath, true);
             streamWriter.WriteLineAsync(message).Wait();
-            streamWriter.Close();
         }
     }
 }
