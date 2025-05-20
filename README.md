@@ -52,3 +52,31 @@ public class HomeController : Controller
 }
 ```
 
+
+# IronLog.MySql
+
+.Net Core MySql Logger Extension
+
+## Setup
+
+`Install-Package IronLog.MySql -Version 1.0.0`
+
+`dotnet add package IronLog.MySql --version 1.0.0`
+
+`<PackageReference Include="IronLog.MySql" Version="1.0.0" />`
+
+######  Startup.cs
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddLogging(builder => builder.AddMySqlLogger(Configuration));
+}
+```
+######  appsettings.json
+```json
+"MySqlLogOptions": {
+    "ConnectionString": "server=.;database=Logs;uid=root;pwd=pass;",
+    "TableName": "AppLogs"
+}
+```
+
