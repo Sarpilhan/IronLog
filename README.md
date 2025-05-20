@@ -10,19 +10,11 @@
 
 `<PackageReference Include="IronLog.File" Version="1.0.2" />`
 
-######  Startup.cs 
+######  Startup.cs
 ```csharp
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
-{ 
-	loggerFactory.AddProvider(new FileLoggerProvider(Configuration)); 
-	app.UseHttpsRedirection();
-	app.UseStaticFiles(); 
-	app.UseRouting(); 
-	app.UseEndpoints(endpoints =>
-	{
-		endpoints.MapBlazorHub();
-		endpoints.MapFallbackToPage("/_Host");
-	});
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddLogging(builder => builder.AddFileLogger(Configuration));
 }
 ```
 ######  appsettings.json

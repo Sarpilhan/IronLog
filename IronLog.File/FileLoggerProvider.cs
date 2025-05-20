@@ -1,9 +1,10 @@
-﻿using IronLog.File.Loggers;
+using IronLog.File.Loggers;
 using IronLog.File.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 
 namespace IronLog.File
 {
@@ -26,10 +27,11 @@ namespace IronLog.File
 
             if (options.Path.StartsWith("\\"))
             {
+                var relativePath = options.Path.TrimStart('\\');
                 if (_env != null)
-                    options.Path = _env.ContentRootPath + options.Path;
+                    options.Path = Path.Combine(_env.ContentRootPath, relativePath);
                 else
-                    options.Path = System.IO.Directory.GetCurrentDirectory() + options.Path;
+                    options.Path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), relativePath);
             }
 
             return options.LoggerType switch

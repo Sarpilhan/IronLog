@@ -1,4 +1,4 @@
-﻿namespace IronLog.File.Model
+namespace IronLog.File.Model
 {
     public class FileLoggerOptions
     {
@@ -11,3 +11,4 @@
         public string DateFormat { get; set; }
     }
 }
+
