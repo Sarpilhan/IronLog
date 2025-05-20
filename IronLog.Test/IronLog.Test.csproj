@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IronLog.File\IronLog.File.csproj" />
+    <ProjectReference Include="..\IronLog.MySql\IronLog.MySql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

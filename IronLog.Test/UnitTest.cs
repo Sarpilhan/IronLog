@@ -1,4 +1,5 @@
 using IronLog.File;
+using IronLog.MySql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,19 @@ namespace IronLog.Test
             logger.LogError("Sample 3");
             logger.LogTrace("Sample 4");
             logger.LogCritical("Sample 5");
+        }
+
+        [TestMethod]
+        public void MySqlTest()
+        {
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            var services = new ServiceCollection();
+            services.AddLogging(builder => builder.AddMySqlLogger(config));
+
+            using var provider = services.BuildServiceProvider();
+            var logger = provider.GetRequiredService<ILogger<UnitTest>>();
+            logger.LogInformation("Sql Sample 1");
         }
     }
 }
